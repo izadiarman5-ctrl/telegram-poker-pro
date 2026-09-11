@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Poker Table</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #123d28 0%,
+                    #07150e 65%,
+                    #040a07 100%
+                );
+
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .table-screen {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        /* TOP BAR */
+
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 60px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 15px;
+
+            z-index: 20;
+
+            background: rgba(0,0,0,.18);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button {
+            width: 42px;
+            height: 42px;
+
+            border: 0;
+            border-radius: 14px;
+
+            background: rgba(255,255,255,.08);
+            color: white;
+
+            font-size: 20px;
+        }
+
+        .table-name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .table-info {
+            font-size: 12px;
+            opacity: .7;
+        }
+
+
+        /* POKER TABLE */
+
+        .poker-table {
+
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: min(92vw, 500px);
+            height: min(62vh, 340px);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    #197445,
+                    #0d4b2d 65%,
+                    #08331f
+                );
+
+            border: 12px solid #382518;
+
+            box-shadow:
+                0 0 0 3px #8d633d,
+                0 30px 70px rgba(0,0,0,.65),
+                inset 0 0 60px rgba(0,0,0,.35);
+
+        }
+
+
+        /* TABLE CENTER */
+
+        .table-center {
+
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform: translate(-50%, -50%);
+
+            text-align: center;
+
+            width: 100%;
+        }
+
+        .pot-label {
+            font-size: 12px;
+            opacity: .65;
+            margin-bottom: 4px;
+        }
+
+        .pot-value {
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .stage {
+            margin-top: 5px;
+            font-size: 11px;
+            opacity: .55;
+            text-transform: uppercase;
+        }
+
+
+        /* COMMUNITY CARDS */
+
+        .community-cards {
+
+            display: flex;
+            justify-content: center;
+
+            gap: 6px;
+
+            margin-bottom: 12px;
+
+        }
+
+        .card {
+
+            width: 42px;
+            height: 58px;
+
+            border-radius: 6px;
+
+            background: #fff;
+
+            color: #111;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+            font-weight: 900;
+
+            box-shadow:
+                0 5px 12px rgba(0,0,0,.4);
+
+        }
+
+        .card.red {
+            color: #d21f35;
+        }
+
+        .card.hidden {
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    #132d66,
+                    #132d66 5px,
+                    #1b428c 5px,
+                    #1b428c 10px
+                );
+
+            color: transparent;
+        }
+
+
+        /* PLAYERS */
+
+        .player {
+
+            position: absolute;
+
+            width: 105px;
+
+            text-align: center;
+
+            transform: translate(-50%, -50%);
+
+        }
+
+
+        .player-avatar {
+
+            width: 52px;
+            height: 52px;
+
+            margin: auto;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #334e68,
+                    #152a3b
+                );
+
+            border: 2px solid rgba(255,255,255,.3);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
+
+            box-shadow:
+                0 7px 15px rgba(0,0,0,.4);
+
+        }
+
+        .player-name {
+
+            margin-top: 4px;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+        }
+
+        .player-chips {
+
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            opacity: .7;
+
+        }
+
+
+        /* PLAYER POSITIONS */
+
+        .p1 {
+            left: 50%;
+            top: 2%;
+        }
+
+        .p2 {
+            left: 87%;
+            top: 25%;
+        }
+
+        .p3 {
+            left: 87%;
+            top: 75%;
+        }
+
+        .p4 {
+            left: 50%;
+            top: 98%;
+        }
+
+        .p5 {
+            left: 13%;
+            top: 75%;
+        }
+
+        .p6 {
+            left: 13%;
+            top: 25%;
+        }
+
+
+        /* DEALER */
+
+        .dealer {
+
+            position: absolute;
+
+            width: 23px;
+            height: 23px;
+
+            border-radius: 50%;
+
+            background: white;
+            color: #111;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 10px;
+            font-weight: 900;
+
+            left: calc(50% + 65px);
+            top: 70px;
+
+            z-index: 5;
+
+        }
+
+
+        /* ACTION BAR */
+
+        .action-bar {
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            padding: 12px;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(0,0,0,.85),
+                    rgba(0,0,0,.45)
+                );
+
+            backdrop-filter: blur(12px);
+
+            z-index: 30;
+
+        }
+
+        .timer {
+
+            text-align: center;
+
+            font-size: 12px;
+
+            opacity: .7;
+
+            margin-bottom: 8px;
+
+        }
+
+        .actions {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr 1fr 1.2fr 1.2fr;
+
+            gap: 7px;
+
+        }
+
+        .action {
+
+            height: 48px;
+
+            border: 0;
+
+            border-radius: 13px;
+
+            color: white;
+
+            font-weight: 800;
+
+            font-size: 12px;
+
+        }
+
+        .fold {
+            background: #8e2634;
+        }
+
+        .check {
+            background: #45515a;
+        }
+
+        .call {
+            background: #126d49;
+        }
+
+        .raise {
+            background: #b06b1b;
+        }
+
+        .allin {
+            background: #a31e83;
+        }
+
+
+        /* YOUR CARDS */
+
+        .your-cards {
+
+            position: absolute;
+
+            left: 50%;
+            bottom: 85px;
+
+            transform: translateX(-50%);
+
+            display: flex;
+
+            gap: 5px;
+
+            z-index: 10;
+
+        }
+
+        .hole-card {
+
+            width: 48px;
+            height: 67px;
+
+            background: white;
+
+            color: #111;
+
+            border-radius: 7px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+            font-weight: 900;
+
+            box-shadow:
+                0 7px 18px rgba(0,0,0,.5);
+
+        }
+
+        .hole-card.red {
+            color: #d21f35;
+        }
+
+
+        @media (max-height: 650px) {
+
+            .poker-table {
+                height: 290px;
+            }
+
+            .your-cards {
+                bottom: 78px;
+            }
+
+            .action {
+                height: 43px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="table-screen">
+
+
+    <div class="top-bar">
+
+        <button
+            class="back-button"
+            onclick="goBack()"
+        >
+            ←
+        </button>
+
+        <div class="table-name">
+            Texas Hold'em
+        </div>
+
+        <div class="table-info">
+            6 MAX
+        </div>
+
+    </div>
+
+
+    <div class="poker-table">
+
+
+        <div class="player p1">
+
+            <div class="player-avatar">
+                🤖
+            </div>
+
+            <div class="player-name">
+                Alex
+            </div>
+
+            <div class="player-chips">
+                🪙 1,240
+            </div>
+
+        </div>
+
+
+        <div class="player p2">
+
+            <div class="player-avatar">
+                🤖
+            </div>
+
+            <div class="player-name">
+                Daniel
+            </div>
+
+            <div class="player-chips">
+                🪙 890
+            </div>
+
+        </div>
+
+
+        <div class="player p3">
+
+            <div class="player-avatar">
+                🤖
+            </div>
+
+            <div class="player-name">
+                Mike
+            </div>
+
+            <div class="player-chips">
+                🪙 1,670
+            </div>
+
+        </div>
+
+
+        <div class="player p4">
+
+            <div class="player-avatar">
+                👤
+            </div>
+
+            <div class="player-name">
+                YOU
+            </div>
+
+            <div class="player-chips">
+                🪙 1,000
+            </div>
+
+        </div>
+
+
+        <div class="player p5">
+
+            <div class="player-avatar">
+                🤖
+            </div>
+
+            <div class="player-name">
+                Chris
+            </div>
+
+            <div class="player-chips">
+                🪙 760
+            </div>
+
+        </div>
+
+
+        <div class="player p6">
+
+            <div class="player-avatar">
+                🤖
+            </div>
+
+            <div class="player-name">
+                James
+            </div>
+
+            <div class="player-chips">
+                🪙 1,420
+            </div>
+
+        </div>
+
+
+        <div class="dealer">
+            D
+        </div>
+
+
+        <div class="table-center">
+
+            <div class="community-cards">
+
+                <div class="card red">
+                    A♥
+                </div>
+
+                <div class="card">
+                    10♣
+                </div>
+
+                <div class="card red">
+                    7♦
+                </div>
+
+                <div class="card hidden">
+                    ?
+                </div>
+
+                <div class="card hidden">
+                    ?
+                </div>
+
+            </div>
+
+            <div class="pot-label">
+                POT
+            </div>
+
+            <div class="pot-value">
+                🪙 240
+            </div>
+
+            <div class="stage">
+                FLOP
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="your-cards">
+
+        <div class="hole-card">
+            K♣
+        </div>
+
+        <div class="hole-card red">
+            J♥
+        </div>
+
+    </div>
+
+
+    <div class="action-bar">
+
+        <div class="timer">
+            Your turn · 18s
+        </div>
+
+        <div class="actions">
+
+            <button
+                class="action fold"
+                onclick="action('fold')"
+            >
+                FOLD
+            </button>
+
+            <button
+                class="action check"
+                onclick="action('check')"
+            >
+                CHECK
+            </button>
+
+            <button
+                class="action call"
+                onclick="action('call')"
+            >
+                CALL
+            </button>
+
+            <button
+                class="action raise"
+                onclick="action('raise')"
+            >
+                RAISE
+            </button>
+
+            <button
+                class="action allin"
+                onclick="action('allin')"
+            >
+                ALL-IN
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function action(type) {
+
+        console.log("Player action:", type);
+
+        alert(
+            type.toUpperCase() +
+            " — Poker engine will handle this."
+        );
+
+    }
+
+
+    function goBack() {
+
+        window.location.href = "./index.html";
+
+    }
+
+</script>
+
+</body>
+</html>
