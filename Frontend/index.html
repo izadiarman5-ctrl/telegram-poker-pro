@@ -151,6 +151,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease;
+        }
+
+        .menu-card:active {
+            transform: scale(.97);
+            background: #12261c;
         }
 
         .menu-card .icon {
@@ -228,6 +236,10 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
         }
     </style>
 </head>
@@ -346,7 +358,10 @@
                 Home
             </button>
 
-            <button class="nav-item">
+            <button
+                class="nav-item"
+                onclick="startPoker()"
+            >
                 <div class="nav-icon">♠️</div>
                 Tables
             </button>
@@ -372,11 +387,17 @@
 
     const tg = window.Telegram?.WebApp;
 
+
     if (tg) {
+
         tg.ready();
+
         tg.expand();
+
         tg.setHeaderColor("#0b1712");
+
         tg.setBackgroundColor("#07110d");
+
     }
 
 
@@ -392,10 +413,12 @@
 
         }
 
+
         return {
             id: "test_user",
             first_name: "Player"
         };
+
     }
 
 
@@ -403,13 +426,16 @@
 
         const user = getTelegramUser();
 
+
         const name =
             user.first_name ||
             user.username ||
             "Player";
 
+
         document.getElementById("welcome").textContent =
             `Welcome, ${name}`;
+
 
         setTimeout(() => {
 
@@ -417,14 +443,13 @@
                 "none";
 
         }, 600);
+
     }
 
 
     function startPoker() {
 
-        alert(
-            "Poker Table is coming next."
-        );
+        window.location.href = "./poker.html";
 
     }
 
