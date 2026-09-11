@@ -2,866 +2,600 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Poker Pro</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
-    background:
-        radial-gradient(circle at top, #163d2b 0%, #07110d 60%);
-    color: white;
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+    background:#050807;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-body {
-    display: flex;
-    justify-content: center;
+body{
+    overflow-x:hidden;
 }
 
-.app {
-    width: 100%;
-    max-width: 700px;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
+.app{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    min-height:100vh;
+    padding:10px;
 }
 
-/* =========================
-   TOP BAR
-========================= */
+/* HEADER */
 
-.topbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 62px;
-    z-index: 20;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 10px 14px;
-
-    background: rgba(0,0,0,.35);
-    backdrop-filter: blur(10px);
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 4px 12px;
 }
 
-.logo {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 1px;
+.logo{
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:1px;
 }
 
-.balance {
-    background: rgba(255,255,255,.09);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 20px;
-    padding: 8px 13px;
-    font-size: 13px;
+.connection{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12px;
+    color:#aaa;
 }
 
-.balance span {
-    color: #ffd54a;
-    font-weight: bold;
+.dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#777;
 }
 
-/* =========================
-   CONNECTION
-========================= */
-
-.connection {
-    position: absolute;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 30;
-
-    padding: 5px 12px;
-    border-radius: 20px;
-
-    background: rgba(0,0,0,.55);
-
-    font-size: 11px;
-    color: #7dff9b;
-
-    white-space: nowrap;
+.dot.online{
+    background:#20d878;
+    box-shadow:0 0 10px #20d878;
 }
 
-/* =========================
-   TABLE AREA
-========================= */
-
-.table-area {
-    position: absolute;
-    top: 62px;
-    left: 0;
-    right: 0;
-    bottom: 155px;
+.dot.error{
+    background:#ff3b30;
 }
 
-/* =========================
-   POKER TABLE
-========================= */
+/* TABLE */
 
-.table {
-    position: absolute;
+.table{
+    position:relative;
+    width:100%;
+    aspect-ratio:1.45 / 1;
+    min-height:470px;
+    max-height:650px;
 
-    width: 88%;
-    height: 55%;
-
-    left: 6%;
-    top: 22%;
-
-    border-radius: 50%;
+    border-radius:50%;
 
     background:
         radial-gradient(
             ellipse at center,
-            #17613e 0%,
-            #0d492f 55%,
-            #083723 100%
+            #147844 0%,
+            #0b572f 55%,
+            #06351f 100%
         );
 
-    border: 9px solid #4d2b15;
+    border:14px solid #171717;
 
     box-shadow:
-        0 0 0 3px #b88745,
-        0 20px 50px rgba(0,0,0,.7),
-        inset 0 0 40px rgba(0,0,0,.45);
-
-}
-
-/* =========================
-   POT
-========================= */
-
-.pot {
-    position: absolute;
-    top: 17%;
-    left: 50%;
-    transform: translateX(-50%);
-
-    text-align: center;
-
-    z-index: 5;
-}
-
-.pot-label {
-    font-size: 11px;
-    opacity: .7;
-    text-transform: uppercase;
-}
-
-.pot-value {
-    margin-top: 3px;
-
-    font-size: 24px;
-    font-weight: 900;
-
-    color: #ffd54a;
-
-    text-shadow:
-        0 2px 5px rgba(0,0,0,.6);
-}
-
-/* =========================
-   STAGE
-========================= */
-
-.stage {
-    position: absolute;
-
-    top: 9%;
-    left: 50%;
-    transform: translateX(-50%);
-
-    padding: 5px 12px;
-
-    border-radius: 15px;
-
-    background: rgba(0,0,0,.4);
-
-    font-size: 11px;
-    text-transform: uppercase;
-
-    letter-spacing: 1px;
-}
-
-/* =========================
-   COMMUNITY CARDS
-========================= */
-
-.community {
-    position: absolute;
-
-    top: 42%;
-    left: 50%;
-    transform: translateX(-50%);
-
-    display: flex;
-    gap: 5px;
-
-    min-height: 62px;
-
-    justify-content: center;
-}
-
-.card {
-    width: 43px;
-    height: 60px;
-
-    border-radius: 7px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff,
-            #dedede
-        );
-
-    color: #111;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 19px;
-    font-weight: 900;
-
-    box-shadow:
-        0 3px 8px rgba(0,0,0,.45);
-
-    animation: cardIn .25s ease;
-}
-
-.card.red {
-    color: #d92727;
-}
-
-.card.empty {
-    background:
-        rgba(255,255,255,.06);
-
-    border:
-        1px dashed rgba(255,255,255,.15);
-
-    color: transparent;
-    box-shadow: none;
-}
-
-@keyframes cardIn {
-
-    from {
-        transform: translateY(-15px) scale(.8);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-
-}
-
-/* =========================
-   SEATS
-========================= */
-
-.seat {
-    position: absolute;
-
-    width: 92px;
-
-    transform: translate(-50%, -50%);
-
-    text-align: center;
-
-    z-index: 10;
-}
-
-.seat-avatar {
-    position: relative;
-
-    width: 45px;
-    height: 45px;
-
-    margin: auto;
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #303030,
-            #111
-        );
-
-    border: 2px solid rgba(255,255,255,.3);
-
-    font-size: 21px;
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,.5);
-
-}
-
-.seat.active .seat-avatar {
-
-    border-color: #39ff79;
-
-    box-shadow:
-        0 0 0 3px rgba(57,255,121,.15),
-        0 0 18px rgba(57,255,121,.8);
-
-    animation: activePulse 1s infinite;
-}
-
-@keyframes activePulse {
-
-    50% {
-        box-shadow:
-            0 0 0 6px rgba(57,255,121,.08),
-            0 0 25px rgba(57,255,121,.95);
-    }
-
-}
-
-.seat-name {
-
-    margin-top: 4px;
-
-    font-size: 11px;
-    font-weight: bold;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.seat-chips {
-
-    margin-top: 2px;
-
-    font-size: 10px;
-
-    color: #ffd54a;
-}
-
-.seat-bet {
-
-    margin-top: 2px;
-
-    font-size: 9px;
-
-    color: #b8ffca;
-}
-
-/* =========================
-   TIMER
-========================= */
-
-.timer {
-
-    position: absolute;
-
-    width: 39px;
-    height: 39px;
-
-    top: -7px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    border-radius: 50%;
-
-    background:
-        conic-gradient(
-            #39ff79 var(--progress),
-            rgba(255,255,255,.12) var(--progress)
-        );
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    z-index: -1;
-
-    opacity: 0;
-
-}
-
-.timer::after {
-
-    content: "";
-
-    width: 31px;
-    height: 31px;
-
-    border-radius: 50%;
-
-    background: #111;
-
-    position: absolute;
-}
-
-.timer-text {
-
-    position: relative;
-    z-index: 2;
-
-    font-size: 11px;
-    font-weight: 900;
-}
-
-.seat.active .timer {
-    opacity: 1;
-}
-
-.seat.warning .timer {
-
-    background:
-        conic-gradient(
-            #ffb020 var(--progress),
-            rgba(255,255,255,.12) var(--progress)
-        );
-}
-
-.seat.danger .timer {
-
-    background:
-        conic-gradient(
-            #ff3030 var(--progress),
-            rgba(255,255,255,.12) var(--progress)
-        );
-
-    animation: dangerPulse .5s infinite;
-}
-
-@keyframes dangerPulse {
-
-    50% {
-        transform:
-            translateX(-50%)
-            scale(1.08);
-    }
-
-}
-
-/* =========================
-   DEALER
-========================= */
-
-.dealer {
-
-    position: absolute;
-
-    width: 19px;
-    height: 19px;
-
-    border-radius: 50%;
-
-    background: white;
-    color: #111;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 9px;
-    font-weight: bold;
-
-    border: 1px solid #aaa;
-
-    right: -4px;
-    bottom: 2px;
-
-    box-shadow:
-        0 2px 5px rgba(0,0,0,.5);
-}
-
-/* =========================
-   YOUR CARDS
-========================= */
-
-.my-cards {
-
-    position: absolute;
-
-    bottom: 8px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    z-index: 15;
-
-    text-align: center;
-}
-
-.my-label {
-
-    font-size: 10px;
-    opacity: .7;
-
-    margin-bottom: 5px;
-}
-
-.my-card-row {
-
-    display: flex;
-    justify-content: center;
-
-    gap: 7px;
-}
-
-.my-card {
-
-    width: 53px;
-    height: 74px;
-
-    border-radius: 8px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #fff,
-            #ddd
-        );
-
-    color: #111;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 23px;
-    font-weight: 900;
-
-    box-shadow:
-        0 5px 14px rgba(0,0,0,.55);
-
-    animation: myCard .3s ease;
-}
-
-@keyframes myCard {
-
-    from {
-        transform: translateY(25px) rotate(-5deg);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0) rotate(0);
-        opacity: 1;
-    }
-
-}
-
-/* =========================
-   CONTROLS
-========================= */
-
-.controls {
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: 155px;
-
-    padding:
-        8px 12px
-        calc(8px + env(safe-area-inset-bottom));
-
-    background:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.96),
-            rgba(0,0,0,.82)
-        );
-
-    z-index: 50;
-}
-
-.turn-info {
-
-    height: 24px;
-
-    text-align: center;
-
-    font-size: 12px;
-
-    color: #8effa8;
-}
-
-.buttons {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 7px;
-
-    margin-top: 5px;
-}
-
-button {
-
-    border: none;
-
-    border-radius: 9px;
-
-    min-height: 42px;
-
-    font-weight: 900;
-
-    font-size: 12px;
-
-    color: white;
-
-    cursor: pointer;
-
-    transition: .15s;
-}
-
-button:active {
-    transform: scale(.96);
-}
-
-.fold {
-    background: #8e2525;
-}
-
-.check {
-    background: #176c43;
-}
-
-.call {
-    background: #176c70;
-}
-
-.raise {
-    background: #76511c;
-}
-
-.allin {
-    background: #76205f;
-}
-
-.secondary {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 7px;
-
-    margin-top: 7px;
-}
-
-.secondary button {
-
-    min-height: 34px;
-
-    background:
-        rgba(255,255,255,.09);
-
-    border:
-        1px solid rgba(255,255,255,.12);
-}
-
-/* =========================
-   RAISE BOX
-========================= */
-
-.raise-box {
-
-    position: fixed;
-
-    left: 50%;
-    bottom: 160px;
-
-    transform:
-        translateX(-50%)
-        translateY(20px);
-
-    width: min(90%, 330px);
-
-    padding: 14px;
-
-    border-radius: 15px;
-
-    background:
-        rgba(15,15,15,.96);
-
-    border:
-        1px solid rgba(255,255,255,.12);
-
-    box-shadow:
+        0 0 0 3px #323232,
+        inset 0 0 40px rgba(0,0,0,.6),
         0 15px 50px rgba(0,0,0,.7);
 
-    z-index: 100;
-
-    display: none;
+    margin:5px auto 15px;
 }
 
-.raise-box.show {
+/* FELT */
 
-    display: block;
-
-    animation:
-        raiseIn .2s ease;
+.table:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.08),
+        inset 0 0 60px rgba(0,0,0,.35);
+    pointer-events:none;
 }
 
-@keyframes raiseIn {
+/* CENTER */
 
-    from {
-        opacity: 0;
-        transform:
-            translateX(-50%)
-            translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform:
-            translateX(-50%)
-            translateY(0);
-    }
-
+.center{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:72%;
+    text-align:center;
+    z-index:5;
 }
 
-.raise-title {
-
-    text-align: center;
-
-    font-weight: bold;
-
-    margin-bottom: 10px;
+.pot{
+    font-size:13px;
+    color:#c8e8d4;
+    margin-bottom:8px;
 }
 
-.raise-input {
-
-    width: 100%;
-
-    height: 40px;
-
-    border-radius: 8px;
-
-    border:
-        1px solid rgba(255,255,255,.15);
-
-    background: #111;
-
-    color: white;
-
-    padding: 0 10px;
-
-    font-size: 15px;
+.pot strong{
+    color:#fff;
+    font-size:20px;
 }
 
-.raise-actions {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 7px;
-
-    margin-top: 8px;
+.stage{
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:20px;
+    background:rgba(0,0,0,.35);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:12px;
 }
 
-/* =========================
-   MESSAGE
-========================= */
+.community{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    min-height:66px;
+}
 
-.message {
+/* CARDS */
 
-    position: fixed;
+.card{
+    width:44px;
+    height:62px;
+    border-radius:6px;
+    background:#fff;
+    color:#111;
 
-    left: 50%;
-    top: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    transform: translate(-50%, -50%);
-
-    z-index: 200;
-
-    padding: 15px 22px;
-
-    border-radius: 15px;
-
-    background:
-        rgba(0,0,0,.9);
-
-    border:
-        1px solid rgba(255,255,255,.15);
-
-    text-align: center;
-
-    font-weight: bold;
-
-    display: none;
+    font-size:18px;
+    font-weight:900;
 
     box-shadow:
-        0 15px 50px rgba(0,0,0,.7);
+        0 4px 8px rgba(0,0,0,.4);
+
+    animation:cardIn .25s ease;
 }
 
-.message.show {
-    display: block;
+.card.red{
+    color:#d92727;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-height: 650px) {
-
-    .table {
-        height: 53%;
-        top: 21%;
-    }
-
-    .table-area {
-        bottom: 145px;
-    }
-
-    .controls {
-        height: 145px;
-    }
-
-    .my-card {
-        width: 47px;
-        height: 66px;
-    }
-
+.card.back{
+    background:
+        linear-gradient(135deg,#8b1515,#4b0808);
+    color:white;
+    border:2px solid #d7a74b;
 }
 
+@keyframes cardIn{
+    from{
+        transform:translateY(-15px) scale(.8);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0) scale(1);
+        opacity:1;
+    }
+}
+
+/* PLAYERS */
+
+.seat{
+    position:absolute;
+    width:92px;
+    text-align:center;
+    z-index:10;
+}
+
+.seatBox{
+    position:relative;
+    padding:6px 5px;
+    border-radius:12px;
+
+    background:rgba(0,0,0,.7);
+    border:1px solid rgba(255,255,255,.12);
+
+    box-shadow:0 4px 12px rgba(0,0,0,.4);
+}
+
+.avatar{
+    width:34px;
+    height:34px;
+    margin:-24px auto 3px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#222;
+    border:2px solid #aaa;
+
+    font-size:17px;
+}
+
+.name{
+    font-size:11px;
+    font-weight:bold;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.chips{
+    font-size:10px;
+    color:#d9d9d9;
+    margin-top:3px;
+}
+
+.playerStatus{
+    font-size:9px;
+    color:#ffcf55;
+    margin-top:2px;
+}
+
+.dealer{
+    position:absolute;
+    top:-8px;
+    right:-8px;
+
+    width:21px;
+    height:21px;
+
+    background:#fff;
+    color:#111;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:10px;
+    font-weight:bold;
+}
+
+/* ACTIVE PLAYER */
+
+.seat.active .seatBox{
+    border-color:#ffd447;
+    box-shadow:
+        0 0 0 2px rgba(255,212,71,.25),
+        0 0 18px rgba(255,212,71,.5);
+}
+
+.seat.folded{
+    opacity:.35;
+}
+
+/* TIMER */
+
+.timer{
+    position:absolute;
+    left:50%;
+    bottom:-13px;
+
+    transform:translateX(-50%);
+
+    width:28px;
+    height:28px;
+
+    border-radius:50%;
+
+    background:#111;
+    border:2px solid #22d878;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:10px;
+    font-weight:bold;
+}
+
+.timer.warning{
+    border-color:#ffc107;
+    color:#ffc107;
+}
+
+.timer.danger{
+    border-color:#ff3b30;
+    color:#ff3b30;
+}
+
+/* SEAT POSITIONS */
+
+.s0{
+    left:50%;
+    top:-25px;
+    transform:translateX(-50%);
+}
+
+.s1{
+    right:0;
+    top:18%;
+}
+
+.s2{
+    right:0;
+    bottom:18%;
+}
+
+.s3{
+    left:50%;
+    bottom:-25px;
+    transform:translateX(-50%);
+}
+
+.s4{
+    left:0;
+    bottom:18%;
+}
+
+.s5{
+    left:0;
+    top:18%;
+}
+
+/* MY CARDS */
+
+.myCards{
+    margin:8px 0 12px;
+    text-align:center;
+}
+
+.myTitle{
+    font-size:12px;
+    color:#aaa;
+    margin-bottom:7px;
+}
+
+.hand{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+}
+
+.myCard{
+    width:65px;
+    height:88px;
+
+    border-radius:8px;
+
+    background:white;
+    color:#111;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+    font-weight:900;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.5);
+
+    animation:cardIn .3s ease;
+}
+
+.myCard.red{
+    color:#d92727;
+}
+
+/* MESSAGE */
+
+.message{
+    min-height:25px;
+    text-align:center;
+    font-size:13px;
+    color:#ddd;
+    margin:5px 0;
+}
+
+.winner{
+    color:#ffd447;
+    font-weight:bold;
+}
+
+/* ACTIONS */
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+    margin-top:10px;
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    min-height:44px;
+
+    background:#1b2420;
+    color:white;
+
+    font-size:12px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.15s;
+}
+
+button:active{
+    transform:scale(.96);
+}
+
+button:disabled{
+    opacity:.35;
+}
+
+.fold{
+    background:#701d1d;
+}
+
+.call{
+    background:#145f3a;
+}
+
+.raise{
+    background:#73530d;
+}
+
+.allin{
+    background:#7a1e68;
+}
+
+.secondary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-top:7px;
+}
+
+.secondary button{
+    background:#151a18;
+    color:#aaa;
+    min-height:38px;
+}
+
+/* RAISE PANEL */
+
+.raisePanel{
+    display:none;
+    margin-top:7px;
+
+    padding:8px;
+
+    background:#111715;
+    border-radius:10px;
+
+    gap:7px;
+}
+
+.raisePanel.show{
+    display:flex;
+}
+
+.raisePanel input{
+    flex:1;
+    min-width:0;
+
+    border:1px solid #333;
+    border-radius:8px;
+
+    background:#080a09;
+    color:white;
+
+    padding:10px;
+    outline:none;
+}
+
+.raisePanel button{
+    width:90px;
+}
+
+/* INFO */
+
+.info{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+    margin-top:10px;
+}
+
+.infoBox{
+    background:#0d1210;
+    border:1px solid #202723;
+    border-radius:9px;
+
+    text-align:center;
+    padding:8px 4px;
+}
+
+.infoLabel{
+    font-size:9px;
+    color:#777;
+}
+
+.infoValue{
+    font-size:12px;
+    margin-top:3px;
+}
+
+/* START */
+
+.startArea{
+    margin-top:10px;
+}
+
+.start{
+    width:100%;
+    background:#d4a72c;
+    color:#111;
+    font-size:14px;
+    min-height:48px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:520px){
+
+    .table{
+        min-height:420px;
+        border-width:10px;
+    }
+
+    .seat{
+        width:82px;
+    }
+
+    .card{
+        width:39px;
+        height:57px;
+        font-size:16px;
+    }
+
+    .myCard{
+        width:58px;
+        height:80px;
+        font-size:22px;
+    }
+
+    .center{
+        width:78%;
+    }
+
+    .community{
+        gap:4px;
+    }
+}
 </style>
 </head>
 
@@ -869,708 +603,727 @@ button:active {
 
 <div class="app">
 
-    <div class="topbar">
+    <div class="header">
 
         <div class="logo">
             ♠ POKER PRO
         </div>
 
-        <div class="balance">
-            🪙 <span id="balance">1,000</span>
+        <div class="connection">
+            <span id="connectionDot" class="dot"></span>
+            <span id="connectionText">Connecting...</span>
         </div>
 
     </div>
 
-    <div
-        id="connection"
-        class="connection">
-        Connecting...
-    </div>
+    <div class="table">
 
-    <div class="table-area">
+        <!-- CENTER -->
 
-        <div class="table">
+        <div class="center">
 
-            <div class="stage"
-                 id="stage">
+            <div class="pot">
+                POT:
+                <strong id="pot">0</strong>
+            </div>
+
+            <div id="stage" class="stage">
                 WAITING
             </div>
 
-            <div class="pot">
-
-                <div class="pot-label">
-                    POT
-                </div>
-
-                <div
-                    class="pot-value"
-                    id="pot">
-                    0
-                </div>
-
-            </div>
-
-            <div
-                class="community"
-                id="community">
-            </div>
-
-            <!-- SEATS -->
-
-            <div class="seat"
-                 id="seat0"
-                 style="left:50%;top:91%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
-
-            <div class="seat"
-                 id="seat1"
-                 style="left:13%;top:70%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
-
-            <div class="seat"
-                 id="seat2"
-                 style="left:12%;top:25%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
-
-            <div class="seat"
-                 id="seat3"
-                 style="left:50%;top:7%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
-
-            <div class="seat"
-                 id="seat4"
-                 style="left:88%;top:25%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
-
-            <div class="seat"
-                 id="seat5"
-                 style="left:87%;top:70%;">
-                <div class="seat-avatar">♠</div>
-                <div class="seat-name">Empty</div>
-                <div class="seat-chips">-</div>
-                <div class="seat-bet"></div>
-            </div>
+            <div id="community" class="community"></div>
 
         </div>
 
-        <div class="my-cards">
+        <!-- SEATS -->
 
-            <div class="my-label">
-                YOUR CARDS
-            </div>
-
-            <div
-                class="my-card-row"
-                id="myCards">
-            </div>
-
-        </div>
+        <div id="seat0" class="seat s0"></div>
+        <div id="seat1" class="seat s1"></div>
+        <div id="seat2" class="seat s2"></div>
+        <div id="seat3" class="seat s3"></div>
+        <div id="seat4" class="seat s4"></div>
+        <div id="seat5" class="seat s5"></div>
 
     </div>
 
-    <div class="controls">
+    <!-- MY CARDS -->
 
-        <div
-            class="turn-info"
-            id="turnInfo">
-            Waiting for game...
+    <div class="myCards">
+
+        <div class="myTitle">
+            YOUR CARDS
         </div>
 
-        <div class="buttons">
-
-            <button
-                class="fold"
-                onclick="sendAction('fold')">
-                FOLD
-            </button>
-
-            <button
-                class="check"
-                onclick="sendAction('check')">
-                CHECK
-            </button>
-
-            <button
-                class="call"
-                onclick="sendAction('call')">
-                CALL
-            </button>
-
-            <button
-                class="raise"
-                onclick="openRaise()">
-                RAISE
-            </button>
-
-            <button
-                class="allin"
-                onclick="sendAction('allin')">
-                ALL-IN
-            </button>
-
-        </div>
-
-        <div class="secondary">
-
-            <button onclick="startGame()">
-                ▶ START GAME
-            </button>
-
-            <button onclick="nextCard()">
-                NEXT STREET
-            </button>
-
-        </div>
+        <div id="myCards" class="hand"></div>
 
     </div>
 
-</div>
+    <!-- MESSAGE -->
 
-
-<!-- RAISE -->
-
-<div
-    class="raise-box"
-    id="raiseBox">
-
-    <div class="raise-title">
-        RAISE TO
+    <div id="message" class="message">
+        Connecting to poker table...
     </div>
 
-    <input
-        id="raiseAmount"
-        class="raise-input"
-        type="number"
-        min="20"
-        placeholder="Enter amount">
+    <!-- ACTIONS -->
 
-    <div class="raise-actions">
+    <div class="actions">
+
+        <button
+            id="foldBtn"
+            class="fold"
+            onclick="sendAction('fold')">
+            FOLD
+        </button>
+
+        <button
+            id="checkBtn"
+            onclick="sendAction('check')">
+            CHECK
+        </button>
+
+        <button
+            id="callBtn"
+            class="call"
+            onclick="sendAction('call')">
+            CALL
+        </button>
+
+        <button
+            id="allinBtn"
+            class="allin"
+            onclick="sendAction('allin')">
+            ALL-IN
+        </button>
+
+    </div>
+
+    <div class="raisePanel" id="raisePanel">
+
+        <input
+            id="raiseAmount"
+            type="number"
+            min="20"
+            step="10"
+            placeholder="Raise amount">
 
         <button
             class="raise"
-            onclick="confirmRaise()">
+            onclick="sendRaise()">
             RAISE
         </button>
 
+    </div>
+
+    <div class="secondary">
+
+        <button onclick="toggleRaise()">
+            RAISE
+        </button>
+
+        <button onclick="refreshNow()">
+            REFRESH
+        </button>
+
+    </div>
+
+    <!-- INFO -->
+
+    <div class="info">
+
+        <div class="infoBox">
+
+            <div class="infoLabel">
+                STAGE
+            </div>
+
+            <div
+                id="infoStage"
+                class="infoValue">
+                Waiting
+            </div>
+
+        </div>
+
+        <div class="infoBox">
+
+            <div class="infoLabel">
+                CURRENT BET
+            </div>
+
+            <div
+                id="currentBet"
+                class="infoValue">
+                0
+            </div>
+
+        </div>
+
+        <div class="infoBox">
+
+            <div class="infoLabel">
+                PLAYERS
+            </div>
+
+            <div
+                id="playerCount"
+                class="infoValue">
+                0 / 6
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- START -->
+
+    <div class="startArea">
+
         <button
-            onclick="closeRaise()">
-            CANCEL
+            id="startBtn"
+            class="start"
+            onclick="startGame()">
+            START GAME
         </button>
 
     </div>
 
 </div>
 
-
-<div
-    class="message"
-    id="message">
-</div>
-
-
 <script>
-
-/* =========================
-   TELEGRAM
-========================= */
 
 const tg = window.Telegram?.WebApp;
 
-if (tg) {
+if(tg){
+
     tg.ready();
     tg.expand();
+
 }
-
-
-/* =========================
-   API
-========================= */
 
 const API =
     "https://telegram-poker-pro-backend.onrender.com";
 
-
-/* =========================
-   USER
-========================= */
-
 let myUserId = null;
 let myName = "Player";
 
-function getTelegramUser() {
+let gameData = null;
+let myCards = [];
 
-    if (
-        tg &&
-        tg.initDataUnsafe &&
-        tg.initDataUnsafe.user
-    ) {
+let loading = false;
+
+let localTimer = 0;
+
+let lastHandNumber = 0;
+
+
+/* =====================================================
+   TELEGRAM USER
+===================================================== */
+
+function getTelegramUser(){
+
+    try{
 
         const user =
-            tg.initDataUnsafe.user;
+            tg?.initDataUnsafe?.user;
 
-        myUserId =
-            String(user.id);
+        if(user){
 
-        myName =
-            user.first_name ||
-            user.username ||
-            "Player";
+            myUserId =
+                String(user.id);
 
-    } else {
-
-        let saved =
-            localStorage.getItem(
-                "poker_user_id"
-            );
-
-        if (!saved) {
-
-            saved =
-                "web_" +
-                Math.random()
-                    .toString(36)
-                    .substring(2, 10);
-
-            localStorage.setItem(
-                "poker_user_id",
-                saved
-            );
-        }
-
-        myUserId = saved;
-
-        myName =
-            localStorage.getItem(
-                "poker_user_name"
-            ) ||
-            "Player";
-    }
-}
-
-
-/* =========================
-   CONNECTION
-========================= */
-
-function setConnection(
-    text,
-    good = true
-) {
-
-    const el =
-        document.getElementById(
-            "connection"
-        );
-
-    el.innerText = text;
-
-    el.style.color =
-        good
-            ? "#7dff9b"
-            : "#ff7070";
-}
-
-
-/* =========================
-   JOIN
-========================= */
-
-async function joinGame() {
-
-    try {
-
-        getTelegramUser();
-
-        const response =
-            await fetch(
-                API + "/join",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        user_id: myUserId,
-                        name: myName
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if (!data.success) {
-
-            setConnection(
-                data.message ||
-                "Join failed",
-                false
-            );
+            myName =
+                user.first_name ||
+                user.username ||
+                "Player";
 
             return;
         }
 
-        setConnection(
-            "● Connected",
-            true
+    }catch(e){}
+
+    let saved =
+        localStorage.getItem(
+            "poker_user_id"
         );
 
-        await loadGame();
-        await loadMyCards();
+    if(!saved){
 
-    } catch (error) {
+        saved =
+            "web_" +
+            Date.now() +
+            "_" +
+            Math.floor(
+                Math.random()*10000
+            );
+
+        localStorage.setItem(
+            "poker_user_id",
+            saved
+        );
+
+    }
+
+    myUserId = saved;
+
+    myName =
+        localStorage.getItem(
+            "poker_name"
+        ) ||
+        "Player";
+
+}
+
+
+/* =====================================================
+   CONNECTION UI
+===================================================== */
+
+function setConnection(
+    online,
+    text
+){
+
+    const dot =
+        document.getElementById(
+            "connectionDot"
+        );
+
+    const label =
+        document.getElementById(
+            "connectionText"
+        );
+
+    dot.className =
+        "dot " +
+        (
+            online
+            ? "online"
+            : "error"
+        );
+
+    label.textContent = text;
+
+}
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(
+    path,
+    options={}
+){
+
+    const response =
+        await fetch(
+            API + path,
+            {
+                ...options,
+                headers:{
+                    "Content-Type":
+                        "application/json",
+                    ...(options.headers || {})
+                }
+            }
+        );
+
+    if(!response.ok){
+
+        throw new Error(
+            "HTTP " +
+            response.status
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+
+/* =====================================================
+   JOIN
+===================================================== */
+
+async function joinGame(){
+
+    try{
+
+        const result =
+            await api(
+                "/join",
+                {
+                    method:"POST",
+                    body:JSON.stringify({
+                        user_id:myUserId,
+                        name:myName
+                    })
+                }
+            );
+
+        if(!result.success){
+
+            showMessage(
+                result.message ||
+                "Unable to join table"
+            );
+
+            return false;
+        }
+
+        setConnection(
+            true,
+            "Connected"
+        );
+
+        return true;
+
+    }catch(error){
 
         console.error(error);
 
         setConnection(
-            "Connection failed",
-            false
+            false,
+            "Connection failed"
         );
+
+        showMessage(
+            "Cannot connect to poker server"
+        );
+
+        return false;
     }
+
 }
 
 
-/* =========================
+/* =====================================================
    LOAD GAME
-========================= */
+===================================================== */
 
-async function loadGame() {
+async function loadGame(){
 
-    try {
-
-        const response =
-            await fetch(
-                API + "/game"
-            );
+    try{
 
         const data =
-            await response.json();
+            await api(
+                "/game"
+            );
+
+        if(!data.success){
+
+            return;
+        }
+
+        gameData = data;
 
         renderGame(data);
 
-    } catch (error) {
+        setConnection(
+            true,
+            "Connected"
+        );
+
+    }catch(error){
 
         console.error(error);
 
         setConnection(
-            "Reconnecting...",
-            false
+            false,
+            "Offline"
         );
+
     }
+
 }
 
 
-/* =========================
+/* =====================================================
    LOAD CARDS
-========================= */
+===================================================== */
 
-async function loadMyCards() {
+async function loadMyCards(){
 
-    try {
+    if(!myUserId)
+        return;
 
-        const response =
-            await fetch(
-                API +
+    try{
+
+        const data =
+            await api(
                 "/my-cards?user_id=" +
                 encodeURIComponent(
                     myUserId
                 )
             );
 
-        const data =
-            await response.json();
+        if(data.success){
 
-        if (data.success) {
+            myCards =
+                data.cards || [];
 
-            renderMyCards(
-                data.cards || []
-            );
+            renderMyCards();
+
         }
 
-    } catch (error) {
+    }catch(error){
 
         console.error(error);
+
     }
+
 }
 
 
-/* =========================
+/* =====================================================
    RENDER GAME
-========================= */
+===================================================== */
 
-function renderGame(data) {
-
-    if (!data) return;
-
-    document.getElementById(
-        "stage"
-    ).innerText =
-        (data.stage || "waiting")
-            .toUpperCase();
+function renderGame(data){
 
     document.getElementById(
         "pot"
-    ).innerText =
-        Number(
-            data.pot || 0
-        ).toLocaleString();
+    ).textContent =
+        data.pot ?? 0;
 
+    document.getElementById(
+        "stage"
+    ).textContent =
+        String(
+            data.stage || "waiting"
+        ).toUpperCase();
+
+    document.getElementById(
+        "infoStage"
+    ).textContent =
+        data.stage || "waiting";
+
+    document.getElementById(
+        "currentBet"
+    ).textContent =
+        data.current_bet ?? 0;
+
+    document.getElementById(
+        "playerCount"
+    ).textContent =
+        `${data.players?.length || 0} / 6`;
 
     renderCommunity(
         data.community_cards || []
     );
 
-
     renderPlayers(
         data.players || [],
         data.current_player,
-        data.turn_time || 0
+        data.turn_time
     );
 
+    updateActions(
+        data
+    );
 
-    const turnInfo =
-        document.getElementById(
-            "turnInfo"
-        );
+    if(data.message){
 
-    const current =
-        (data.players || [])
-            .find(
-                p =>
-                    p.user_id ===
-                    data.current_player
+        if(data.winner){
+
+            showMessage(
+                "🏆 " +
+                data.message,
+                true
             );
 
+        }else{
 
-    if (!data.started) {
+            showMessage(
+                data.message
+            );
 
-        if (data.winner) {
-
-            turnInfo.innerText =
-                "🏆 " +
-                data.winner;
-
-        } else {
-
-            turnInfo.innerText =
-                "Waiting for game...";
         }
 
-        return;
+    }else if(!data.started){
+
+        showMessage(
+            "Waiting for next hand..."
+        );
+
     }
 
+    if(
+        data.hand_number &&
+        data.hand_number !== lastHandNumber
+    ){
 
-    if (current) {
+        lastHandNumber =
+            data.hand_number;
 
-        if (
-            current.user_id ===
-            myUserId
-        ) {
+        myCards = [];
 
-            turnInfo.innerText =
-                "🔥 YOUR TURN";
-
-        } else {
-
-            turnInfo.innerText =
-                "🎯 " +
-                current.name +
-                "'s turn";
-        }
-
-    } else {
-
-        turnInfo.innerText =
-            "Waiting...";
     }
+
 }
 
 
-/* =========================
-   COMMUNITY
-========================= */
+/* =====================================================
+   COMMUNITY CARDS
+===================================================== */
 
-function renderCommunity(cards) {
+function renderCommunity(cards){
 
-    const box =
+    const container =
         document.getElementById(
             "community"
         );
 
-    box.innerHTML = "";
+    container.innerHTML = "";
 
-    for (
-        let i = 0;
-        i < 5;
-        i++
-    ) {
+    cards.forEach(card => {
 
-        const card =
+        const div =
             document.createElement(
                 "div"
             );
 
-        if (cards[i]) {
+        div.className =
+            "card " +
+            (
+                isRed(card)
+                ? "red"
+                : ""
+            );
 
-            card.className =
-                "card";
+        div.textContent = card;
 
-            if (
-                cards[i].includes("♥") ||
-                cards[i].includes("♦")
-            ) {
+        container.appendChild(
+            div
+        );
 
-                card.classList.add(
-                    "red"
-                );
-            }
+    });
 
-            card.innerText =
-                cards[i];
-
-        } else {
-
-            card.className =
-                "card empty";
-        }
-
-        box.appendChild(card);
-    }
 }
 
 
-/* =========================
-   PLAYERS
-========================= */
+/* =====================================================
+   MY CARDS
+===================================================== */
+
+function renderMyCards(){
+
+    const container =
+        document.getElementById(
+            "myCards"
+        );
+
+    container.innerHTML = "";
+
+    myCards.forEach(card => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "myCard " +
+            (
+                isRed(card)
+                ? "red"
+                : ""
+            );
+
+        div.textContent = card;
+
+        container.appendChild(
+            div
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   PLAYER SEATS
+===================================================== */
 
 function renderPlayers(
     list,
     currentPlayer,
-    time
-) {
+    serverTime
+){
 
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
+    for(let i=0;i<6;i++){
 
         const seat =
             document.getElementById(
                 "seat" + i
             );
 
-        const p = list[i];
+        seat.innerHTML = "";
 
+        seat.className =
+            "seat " +
+            [
+                "s0",
+                "s1",
+                "s2",
+                "s3",
+                "s4",
+                "s5"
+            ][i];
 
-        seat.classList.remove(
-            "active",
-            "warning",
-            "danger"
-        );
+        const p =
+            list[i];
 
+        if(!p)
+            continue;
+
+        if(p.folded){
+
+            seat.classList.add(
+                "folded"
+            );
+
+        }
+
+        if(
+            p.user_id ===
+            currentPlayer
+        ){
+
+            seat.classList.add(
+                "active"
+            );
+
+        }
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+        box.className =
+            "seatBox";
 
         const avatar =
-            seat.querySelector(
-                ".seat-avatar"
+            document.createElement(
+                "div"
             );
 
-        const name =
-            seat.querySelector(
-                ".seat-name"
-            );
+        avatar.className =
+            "avatar";
 
-        const chips =
-            seat.querySelector(
-                ".seat-chips"
-            );
+        avatar.textContent =
+            p.is_bot
+            ? "🤖"
+            : "👤";
 
-        const bet =
-            seat.querySelector(
-                ".seat-bet"
-            );
-
-
-        seat.querySelectorAll(
-            ".timer,.dealer"
-        ).forEach(
-            el => el.remove()
+        box.appendChild(
+            avatar
         );
 
-
-        if (!p) {
-
-            avatar.innerText = "♠";
-            name.innerText = "Empty";
-            chips.innerText = "-";
-            bet.innerText = "";
-
-            continue;
-        }
-
-
-        avatar.innerText =
-            p.is_bot
-                ? "🤖"
-                : "👤";
-
-
-        name.innerText =
-            p.name || "Player";
-
-
-        chips.innerText =
-            "🪙 " +
-            Number(
-                p.chips || 0
-            ).toLocaleString();
-
-
-        if (p.folded) {
-
-            bet.innerText =
-                "FOLDED";
-
-            seat.style.opacity =
-                ".45";
-
-        } else {
-
-            seat.style.opacity =
-                "1";
-
-            bet.innerText =
-                p.bet > 0
-                    ? "BET " +
-                      p.bet
-                    : "";
-        }
-
-
-        if (p.is_dealer) {
+        if(p.is_dealer){
 
             const dealer =
                 document.createElement(
@@ -1580,24 +1333,90 @@ function renderPlayers(
             dealer.className =
                 "dealer";
 
-            dealer.innerText =
+            dealer.textContent =
                 "D";
 
-            seat.appendChild(
+            box.appendChild(
                 dealer
             );
+
         }
 
-
-        if (
-            p.user_id ===
-            currentPlayer
-        ) {
-
-            seat.classList.add(
-                "active"
+        const name =
+            document.createElement(
+                "div"
             );
 
+        name.className =
+            "name";
+
+        name.textContent =
+            p.name || "Player";
+
+        box.appendChild(
+            name
+        );
+
+        const chips =
+            document.createElement(
+                "div"
+            );
+
+        chips.className =
+            "chips";
+
+        chips.textContent =
+            "🪙 " +
+            (p.chips ?? 0);
+
+        box.appendChild(
+            chips
+        );
+
+        const status =
+            document.createElement(
+                "div"
+            );
+
+        status.className =
+            "playerStatus";
+
+        if(p.folded){
+
+            status.textContent =
+                "FOLDED";
+
+        }else if(p.all_in){
+
+            status.textContent =
+                "ALL-IN";
+
+        }else if(
+            p.user_id ===
+            currentPlayer
+        ){
+
+            status.textContent =
+                "YOUR TURN";
+
+        }else{
+
+            status.textContent =
+                "";
+        }
+
+        box.appendChild(
+            status
+        );
+
+        seat.appendChild(
+            box
+        );
+
+        if(
+            p.user_id ===
+            currentPlayer
+        ){
 
             const timer =
                 document.createElement(
@@ -1607,439 +1426,426 @@ function renderPlayers(
             timer.className =
                 "timer";
 
-            const timerText =
-                document.createElement(
-                    "div"
-                );
+            timer.id =
+                "seatTimer";
 
-            timerText.className =
-                "timer-text";
-
-            timerText.innerText =
-                Math.max(
-                    0,
-                    time
-                );
-
-            timer.appendChild(
-                timerText
-            );
+            timer.textContent =
+                serverTime ?? 0;
 
             seat.appendChild(
                 timer
             );
 
-
-            updateTimer(
-                seat,
-                timer,
-                timerText,
-                time
-            );
         }
+
     }
+
+    localTimer =
+        Number(
+            serverTime || 0
+        );
+
 }
 
 
-/* =========================
+/* =====================================================
    TIMER
-========================= */
+===================================================== */
 
-function updateTimer(
-    seat,
-    timer,
-    text,
-    seconds
-) {
+function updateLocalTimer(){
 
-    const total = 30;
+    if(
+        !gameData ||
+        !gameData.started
+    ){
 
-    let remaining =
-        Math.max(
-            0,
-            Number(seconds)
+        return;
+    }
+
+    const timer =
+        document.getElementById(
+            "seatTimer"
         );
 
-    function tick() {
+    if(!timer)
+        return;
 
-        text.innerText =
-            remaining;
+    localTimer =
+        Math.max(
+            0,
+            localTimer - 1
+        );
 
-        const percent =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    (remaining /
-                        total) *
-                        100
-                )
-            );
+    timer.textContent =
+        localTimer;
 
-        timer.style
-            .setProperty(
-                "--progress",
-                percent + "%"
-            );
+    timer.classList.remove(
+        "warning",
+        "danger"
+    );
 
+    if(localTimer <= 10){
 
-        seat.classList.remove(
-            "warning",
+        timer.classList.add(
+            "warning"
+        );
+
+    }
+
+    if(localTimer <= 5){
+
+        timer.classList.add(
             "danger"
         );
 
-
-        if (remaining <= 10) {
-
-            seat.classList.add(
-                "warning"
-            );
-        }
-
-
-        if (remaining <= 5) {
-
-            seat.classList.remove(
-                "warning"
-            );
-
-            seat.classList.add(
-                "danger"
-            );
-        }
-
-
-        if (remaining > 0) {
-
-            remaining--;
-
-            setTimeout(
-                tick,
-                1000
-            );
-        }
     }
 
-    tick();
 }
 
 
-/* =========================
-   MY CARDS
-========================= */
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
 
-function renderMyCards(cards) {
+function updateActions(data){
 
-    const box =
-        document.getElementById(
-            "myCards"
-        );
+    const myTurn =
+        data.current_player ===
+        myUserId;
 
-    box.innerHTML = "";
+    const active =
+        data.started &&
+        myTurn;
 
-    cards.forEach(cardValue => {
+    document.getElementById(
+        "foldBtn"
+    ).disabled =
+        !active;
 
-        const card =
-            document.createElement(
-                "div"
-            );
+    document.getElementById(
+        "checkBtn"
+    ).disabled =
+        !active;
 
-        card.className =
-            "my-card";
+    document.getElementById(
+        "callBtn"
+    ).disabled =
+        !active;
 
-        if (
-            cardValue.includes("♥") ||
-            cardValue.includes("♦")
-        ) {
+    document.getElementById(
+        "allinBtn"
+    ).disabled =
+        !active;
 
-            card.style.color =
-                "#d92727";
-        }
-
-        card.innerText =
-            cardValue;
-
-        box.appendChild(card);
-    });
 }
 
 
-/* =========================
-   ACTION
-========================= */
+/* =====================================================
+   SEND ACTION
+===================================================== */
 
 async function sendAction(
-    action,
-    amount = 0
-) {
+    action
+){
 
-    try {
+    if(loading)
+        return;
 
-        const response =
-            await fetch(
-                API + "/action",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        user_id:
-                            myUserId,
-
-                        action:
-                            action,
-
-                        amount:
-                            Number(amount || 0)
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            showMessage(
-                data.message ||
-                "Action failed"
-            );
-
-            return;
-        }
-
-
-        renderGame(
-            data.game
-        );
-
-        await loadMyCards();
-
-    } catch (error) {
-
-        console.error(error);
+    if(
+        !gameData ||
+        gameData.current_player !==
+        myUserId
+    ){
 
         showMessage(
-            "Connection error"
-        );
-    }
-}
-
-
-/* =========================
-   START GAME
-========================= */
-
-async function startGame() {
-
-    try {
-
-        const response =
-            await fetch(
-                API + "/start",
-                {
-                    method: "POST"
-                }
-            );
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            showMessage(
-                data.message ||
-                "Could not start game"
-            );
-
-            return;
-        }
-
-
-        renderGame(
-            data.game
-        );
-
-        await loadMyCards();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "Could not connect"
-        );
-    }
-}
-
-
-/* =========================
-   NEXT STREET
-========================= */
-
-async function nextCard() {
-
-    try {
-
-        const response =
-            await fetch(
-                API + "/next-card",
-                {
-                    method: "POST"
-                }
-            );
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            showMessage(
-                data.message ||
-                "Cannot advance"
-            );
-
-            return;
-        }
-
-
-        renderGame(data);
-
-        await loadMyCards();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "Connection error"
-        );
-    }
-}
-
-
-/* =========================
-   RAISE
-========================= */
-
-function openRaise() {
-
-    document
-        .getElementById(
-            "raiseBox"
-        )
-        .classList.add(
-            "show"
-        );
-
-    document
-        .getElementById(
-            "raiseAmount"
-        )
-        .focus();
-}
-
-
-function closeRaise() {
-
-    document
-        .getElementById(
-            "raiseBox"
-        )
-        .classList.remove(
-            "show"
-        );
-}
-
-
-async function confirmRaise() {
-
-    const amount =
-        Number(
-            document.getElementById(
-                "raiseAmount"
-            ).value
-        );
-
-
-    if (!amount || amount <= 0) {
-
-        showMessage(
-            "Enter a valid amount"
+            "It is not your turn"
         );
 
         return;
     }
 
+    loading = true;
 
-    closeRaise();
+    try{
 
-    await sendAction(
-        "raise",
-        amount
-    );
+        const result =
+            await api(
+                "/action",
+                {
+                    method:"POST",
+                    body:JSON.stringify({
+                        user_id:myUserId,
+                        action:action,
+                        amount:0
+                    })
+                }
+            );
+
+        if(!result.success){
+
+            showMessage(
+                result.message ||
+                "Action failed"
+            );
+
+        }
+
+        await refreshNow();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Action failed"
+        );
+
+    }
+
+    loading = false;
+
 }
 
 
-/* =========================
+/* =====================================================
+   RAISE
+===================================================== */
+
+function toggleRaise(){
+
+    const panel =
+        document.getElementById(
+            "raisePanel"
+        );
+
+    panel.classList.toggle(
+        "show"
+    );
+
+}
+
+
+async function sendRaise(){
+
+    const input =
+        document.getElementById(
+            "raiseAmount"
+        );
+
+    const amount =
+        Number(
+            input.value
+        );
+
+    if(!amount){
+
+        showMessage(
+            "Enter raise amount"
+        );
+
+        return;
+    }
+
+    if(loading)
+        return;
+
+    loading = true;
+
+    try{
+
+        const result =
+            await api(
+                "/action",
+                {
+                    method:"POST",
+                    body:JSON.stringify({
+                        user_id:myUserId,
+                        action:"raise",
+                        amount:amount
+                    })
+                }
+            );
+
+        if(!result.success){
+
+            showMessage(
+                result.message ||
+                "Raise failed"
+            );
+
+        }
+
+        input.value = "";
+
+        document.getElementById(
+            "raisePanel"
+        ).classList.remove(
+            "show"
+        );
+
+        await refreshNow();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Raise failed"
+        );
+
+    }
+
+    loading = false;
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+async function startGame(){
+
+    if(loading)
+        return;
+
+    loading = true;
+
+    try{
+
+        const result =
+            await api(
+                "/start",
+                {
+                    method:"POST"
+                }
+            );
+
+        if(!result.success){
+
+            showMessage(
+                result.message ||
+                "Could not start game"
+            );
+
+        }else{
+
+            showMessage(
+                "Game started"
+            );
+
+        }
+
+        await refreshNow();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Could not start game"
+        );
+
+    }
+
+    loading = false;
+
+}
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+async function refreshNow(){
+
+    await loadGame();
+    await loadMyCards();
+
+}
+
+
+/* =====================================================
    MESSAGE
-========================= */
+===================================================== */
 
 function showMessage(
-    text
-) {
+    text,
+    winner=false
+){
 
-    const box =
+    const el =
         document.getElementById(
             "message"
         );
 
-    box.innerText =
+    el.textContent =
         text;
 
-    box.classList.add(
-        "show"
-    );
+    el.className =
+        winner
+        ? "message winner"
+        : "message";
 
-
-    setTimeout(() => {
-
-        box.classList.remove(
-            "show"
-        );
-
-    }, 2200);
 }
 
 
-/* =========================
-   AUTO REFRESH
-========================= */
+/* =====================================================
+   RED CARD
+===================================================== */
 
-setInterval(
-    async () => {
+function isRed(card){
 
-        await loadGame();
+    if(!card)
+        return false;
 
-        await loadMyCards();
+    return (
+        card.includes("♥") ||
+        card.includes("♦")
+    );
 
-    },
-    1000
-);
+}
 
 
-/* =========================
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+async function initialize(){
+
+    getTelegramUser();
+
+    const joined =
+        await joinGame();
+
+    if(!joined)
+        return;
+
+    await refreshNow();
+
+    setInterval(
+        loadGame,
+        1000
+    );
+
+    setInterval(
+        loadMyCards,
+        1200
+    );
+
+    setInterval(
+        updateLocalTimer,
+        1000
+    );
+
+}
+
+
+/* =====================================================
    START
-========================= */
+===================================================== */
 
-joinGame();
+initialize();
 
 </script>
 
