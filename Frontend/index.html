@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Telegram Poker Pro</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #07110d;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 520px;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            background: #0b1712;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .balance {
+            background: #16251d;
+            border: 1px solid rgba(255,255,255,.08);
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+        }
+
+        .hero {
+            background:
+                radial-gradient(circle at top right, #185c3b, transparent 45%),
+                linear-gradient(145deg, #10251a, #09130e);
+
+            border-radius: 24px;
+            padding: 24px;
+            min-height: 190px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 15px 50px rgba(0,0,0,.3);
+        }
+
+        .hero small {
+            opacity: .65;
+            margin-bottom: 8px;
+        }
+
+        .hero h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            opacity: .7;
+            font-size: 14px;
+        }
+
+        .play-button {
+            width: 100%;
+            margin-top: 20px;
+            height: 58px;
+
+            border: 0;
+            border-radius: 18px;
+
+            background: #18a66a;
+            color: white;
+
+            font-size: 17px;
+            font-weight: 800;
+
+            box-shadow: 0 10px 30px rgba(24,166,106,.25);
+        }
+
+        .section-title {
+            margin: 26px 4px 12px;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .menu-card {
+            min-height: 110px;
+            padding: 18px;
+
+            background: #0d1b15;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 18px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-card .icon {
+            font-size: 26px;
+        }
+
+        .menu-card span {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .bottom-nav {
+            height: 72px;
+
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+
+            background: #0b1712;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        .nav-item {
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,.45);
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+            font-size: 11px;
+        }
+
+        .nav-item.active {
+            color: #18c47b;
+        }
+
+        .nav-icon {
+            font-size: 21px;
+        }
+
+        .loading {
+            position: fixed;
+            inset: 0;
+            background: #07110d;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            z-index: 999;
+        }
+
+        .loading-inner {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+
+            border: 4px solid rgba(255,255,255,.1);
+            border-top-color: #18c47b;
+
+            border-radius: 50%;
+
+            animation: spin .8s linear infinite;
+
+            margin: auto auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="loading" class="loading">
+    <div class="loading-inner">
+        <div class="spinner"></div>
+        <div>Loading Poker Pro...</div>
+    </div>
+</div>
+
+<div id="app">
+
+    <div class="screen">
+
+        <header class="topbar">
+
+            <div class="logo">
+                ♠ POKER PRO
+            </div>
+
+            <div class="balance">
+                🪙 <span id="chips">1,000</span>
+            </div>
+
+        </header>
+
+
+        <main class="content">
+
+            <section class="hero">
+
+                <small id="welcome">
+                    Welcome
+                </small>
+
+                <h1>
+                    Texas Hold'em
+                </h1>
+
+                <p>
+                    Play. Bluff. Win.
+                </p>
+
+                <button
+                    class="play-button"
+                    onclick="startPoker()"
+                >
+                    PLAY POKER
+                </button>
+
+            </section>
+
+
+            <div class="section-title">
+                Game Modes
+            </div>
+
+
+            <section class="cards">
+
+                <div
+                    class="menu-card"
+                    onclick="startPoker()"
+                >
+                    <div class="icon">♠️</div>
+                    <span>Cash Game</span>
+                </div>
+
+                <div class="menu-card">
+                    <div class="icon">🏆</div>
+                    <span>Tournaments</span>
+                </div>
+
+                <div class="menu-card">
+                    <div class="icon">👥</div>
+                    <span>Private Table</span>
+                </div>
+
+                <div class="menu-card">
+                    <div class="icon">🤖</div>
+                    <span>Play vs Bots</span>
+                </div>
+
+            </section>
+
+
+            <div class="section-title">
+                Your Progress
+            </div>
+
+
+            <section class="cards">
+
+                <div class="menu-card">
+                    <div class="icon">⭐</div>
+                    <span>Level 1</span>
+                </div>
+
+                <div class="menu-card">
+                    <div class="icon">🔥</div>
+                    <span>Daily Bonus</span>
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <nav class="bottom-nav">
+
+            <button class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                Home
+            </button>
+
+            <button class="nav-item">
+                <div class="nav-icon">♠️</div>
+                Tables
+            </button>
+
+            <button class="nav-item">
+                <div class="nav-icon">🏆</div>
+                Ranking
+            </button>
+
+            <button class="nav-item">
+                <div class="nav-icon">👤</div>
+                Profile
+            </button>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.setHeaderColor("#0b1712");
+        tg.setBackgroundColor("#07110d");
+    }
+
+
+    function getTelegramUser() {
+
+        if (
+            tg &&
+            tg.initDataUnsafe &&
+            tg.initDataUnsafe.user
+        ) {
+
+            return tg.initDataUnsafe.user;
+
+        }
+
+        return {
+            id: "test_user",
+            first_name: "Player"
+        };
+    }
+
+
+    function initializeApp() {
+
+        const user = getTelegramUser();
+
+        const name =
+            user.first_name ||
+            user.username ||
+            "Player";
+
+        document.getElementById("welcome").textContent =
+            `Welcome, ${name}`;
+
+        setTimeout(() => {
+
+            document.getElementById("loading").style.display =
+                "none";
+
+        }, 600);
+    }
+
+
+    function startPoker() {
+
+        alert(
+            "Poker Table is coming next."
+        );
+
+    }
+
+
+    initializeApp();
+
+</script>
+
+</body>
+</html>
